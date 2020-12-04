@@ -9,3 +9,7 @@
 
 #define GPIO_OUTPUT_IO_1    16
 #define GPIO_OUTPUT_PIN_SEL  ((1ULL<<GPIO_OUTPUT_IO_1))
+
+#define EXAMPLE_ESP_WIFI_SSID      "nanoDRONE.0.0.1"
+#define EXAMPLE_ESP_WIFI_PASS      "123456789"
+#define EXAMPLE_MAX_STA_CONN       1
