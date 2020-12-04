@@ -75,6 +75,8 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 
 void wifi_init_softap()
 {
+    ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
+    
     tcpip_adapter_init();
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
@@ -113,13 +115,12 @@ void app_main()
     *** Init functions
     ***************************************/
     {
+        ESP_ERROR_CHECK(nvs_flash_init());
+        
         /* Configure the pins */
         pin_config();
 
         /* setup SoftAp */
-        ESP_ERROR_CHECK(nvs_flash_init());
-
-        ESP_LOGI(TAG, "ESP_WIFI_MODE_AP");
         wifi_init_softap();
     }
    
