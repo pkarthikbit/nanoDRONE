@@ -40,7 +40,17 @@ void pin_config()
 void blinkLED_infinit()
 {
     ESP_LOGI(TAG, "cnt: %d\n", cnt++);
-    vTaskDelay(1000 / portTICK_RATE_MS);
+    if(cnt % 2)
+    {
+        //LED ON
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+    else
+    {
+        //LED off
+        vTaskDelay(10000 / portTICK_RATE_MS);
+    }
+    
     gpio_set_level(GPIO_OUTPUT_IO_1, cnt % 2);
 }
 
