@@ -6,18 +6,10 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
-#include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-
-#include "driver/gpio.h"
-
-#include "esp_log.h"
+#include <nanoDRONE_inf.h>
+#include <nanoDRONE_priv.h>
 
 static const char *TAG = "main";
-
-#define GPIO_OUTPUT_IO_1    16
-#define GPIO_OUTPUT_PIN_SEL  ((1ULL<<GPIO_OUTPUT_IO_1))
 
 void app_main()
 {
