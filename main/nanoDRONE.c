@@ -13,8 +13,6 @@
 *** Static variable definition
 ***************************************/
 static const char *TAG = "nanoDRONE";
-static int cnt = 0;
-
 static httpd_handle_t server = NULL;
 /***************************************
 *** Configure pins
@@ -35,26 +33,6 @@ void pin_config()
     io_conf.pull_up_en = 0;
     //configure GPIO with the given settings
     gpio_config(&io_conf);
-}
-
-/***************************************
-*** Blink the inbuild LED infinitely
-***************************************/
-void blinkLED_infinit()
-{
-    ESP_LOGI(TAG, "cnt: %d\n", cnt++);
-    if(cnt % 2)
-    {
-        //LED ON
-        vTaskDelay(1000 / portTICK_RATE_MS);
-    }
-    else
-    {
-        //LED off
-        vTaskDelay(10000 / portTICK_RATE_MS);
-    }
-    
-    gpio_set_level(GPIO_OUTPUT_IO_1, cnt % 2);
 }
 
 /***************************************
@@ -119,10 +97,12 @@ esp_err_t hello_get_handler(httpd_req_t *req)
     /* Get header value string length and allocate memory for length + 1,
      * extra byte for null termination */
     buf_len = httpd_req_get_hdr_value_len(req, "Host") + 1;
-    if (buf_len > 1) {
+    if (buf_len > 1) 
+    {
         buf = malloc(buf_len);
         /* Copy null terminated value string into buffer */
-        if (httpd_req_get_hdr_value_str(req, "Host", buf, buf_len) == ESP_OK) {
+        if (httpd_req_get_hdr_value_str(req, "Host", buf, buf_len) == ESP_OK) 
+        {
             ESP_LOGI(TAG, "Found header => Host: %s", buf);
         }
         free(buf);
@@ -151,11 +131,26 @@ esp_err_t hello_get_handler(httpd_req_t *req)
     buf_len = httpd_req_get_url_query_len(req) + 1;
     if (buf_len > 1) {
         buf = malloc(buf_len);
-        if (httpd_req_get_url_query_str(req, buf, buf_len) == ESP_OK) {
+        if (httpd_req_get_url_query_str(req, buf, buf_len) == ESP_OK) 
+        {
             ESP_LOGI(TAG, "Found URL query => %s", buf);
+
+            if(*buf == '0')
+            {
+                //LED off
+                gpio_set_level(GPIO_OUTPUT_IO_1, true);
+            }
+            else
+            {
+                //LED on
+                gpio_set_level(GPIO_OUTPUT_IO_1, false);
+            
+            }
+
             char param[32];
             /* Get value of expected key from query string */
-            if (httpd_query_key_value(buf, "query1", param, sizeof(param)) == ESP_OK) {
+            if (httpd_query_key_value(buf, "query1", param, sizeof(param)) == ESP_OK) 
+            {
                 ESP_LOGI(TAG, "Found URL query parameter => query1=%s", param);
             }
             if (httpd_query_key_value(buf, "query3", param, sizeof(param)) == ESP_OK) {
@@ -235,9 +230,6 @@ void app_main()
         
         /* http_server */
         server = start_webserver();
-
-        /* blink LED infinitely */
-        blinkLED_infinit();
     }
    
     /***************************************
