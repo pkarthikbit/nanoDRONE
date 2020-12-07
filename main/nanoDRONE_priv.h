@@ -6,12 +6,12 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
-#define PWM_0_OUT_IO_NUM   12
+#define PWM_0_OUT_IO_NUM   16 /* exchanged pins 16 and 12 */
 #define PWM_1_OUT_IO_NUM   13
 #define PWM_2_OUT_IO_NUM   14
 #define PWM_3_OUT_IO_NUM   15
-#define GPIO_OUTPUT_IO_1    16
 
+#define GPIO_OUTPUT_IO_1    12
 
 #define GPIO_OUTPUT_PIN_SEL  ((1ULL<<GPIO_OUTPUT_IO_1))
 
@@ -28,13 +28,13 @@ const uint32_t pin_num[4] = {
 };
 
 // duties table, real_duty = duties[x]/PERIOD
-uint32_t duties[4] = {
-    500, 500, 500, 500,
+uint32_t duties_init[4] = {
+    0, 0, 0, 0,
 };
 
 // phase table, delay = (phase[x]/360)*PERIOD
-float phase[4] = {
-    0, 0, 90.0, -90.0,
+float phase_init[4] = {
+    0, 0, 0, 0,
 };
 
 // PWM period 1000us(1Khz), same as depth
