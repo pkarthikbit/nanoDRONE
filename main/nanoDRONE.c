@@ -151,6 +151,33 @@ httpd_handle_t start_webserver(void)
 }
 
 /***************************************
+*** PWM Configuration
+***************************************/
+void pwm_config()
+{
+    pwm_init(PWM_PERIOD, duties, 4, pin_num);
+    pwm_set_phases(phase);
+    pwm_start();
+    int16_t count = 0;
+
+    while (1) {
+        if (count == 20) {
+            // channel0, 1 output hight level.
+            // channel2, 3 output low level.
+            pwm_stop(0x3);
+            ESP_LOGI(TAG, "PWM stop\n");
+        } else if (count == 30) {
+            pwm_start();
+            ESP_LOGI(TAG, "PWM re-start\n");
+            count = 0;
+        }
+
+        count++;
+        vTaskDelay(1000 / portTICK_RATE_MS);
+    }
+}
+
+/***************************************
 *** Main function
 ***************************************/
 void app_main()
@@ -170,6 +197,9 @@ void app_main()
         
         /* http_server */
         server = start_webserver();
+
+        /* PWM config */
+        pwm_config();
     }
    
     /***************************************

@@ -7,6 +7,7 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 #include "driver/gpio.h"
+#include "driver/pwm.h"
 
 #include "esp_log.h"
 #include "esp_system.h"
