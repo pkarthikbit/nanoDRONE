@@ -29,13 +29,13 @@ const uint32_t pin_num[4] = {
 
 // duties table, real_duty = duties[x]/PERIOD
 uint32_t duties[4] = {
-    500, 500, 500, 500,
+    (1 * (10^6)), (1 * (10^6)), (1 * (10^6)), (1 * (10^6)),
 };
 
 // phase table, delay = (phase[x]/360)*PERIOD
 float phase[4] = {
-    0, 0, 90.0, -90.0,
+    0, 0, 0, 0,
 };
 
-// PWM period 1000us(1Khz), same as depth
-#define PWM_PERIOD    (1000)
+// PWM period in us
+#define PWM_PERIOD    (1 * (10^6))
