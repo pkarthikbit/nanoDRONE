@@ -6,7 +6,7 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
-#define PWM_0_OUT_IO_NUM   12
+#define PWM_0_OUT_IO_NUM   2
 #define PWM_1_OUT_IO_NUM   13
 #define PWM_2_OUT_IO_NUM   14
 #define PWM_3_OUT_IO_NUM   15
