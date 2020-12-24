@@ -14,8 +14,7 @@
 ***************************************/
 static const char *TAG = "nanoDRONE";
 static httpd_handle_t server = NULL;
-static uint32_t dtyCyl_u32[4];
-
+static bool st_LED;
 /***************************************
 *** Configure pins
 ***************************************/
@@ -106,18 +105,9 @@ esp_err_t power_get_handler(httpd_req_t *req)
         if (httpd_req_get_hdr_value_str(req, "Host", buf, buf_len) == ESP_OK) 
         {
             ESP_LOGI(TAG, "Found header => Host: %s", buf);
-          
-            dtyCyl_u32[0] = dtyCyl_u32[0] + 100;
 
-            if(dtyCyl_u32[0] >=1000)
-            {
-                dtyCyl_u32[0] = 0;
-            }
-            
-            // channel0, 1 output hight level.
-            // channel2, 3 output low level.
-            //pwm_stop(0x3);
-            //gpio_set_level(GPIO_OUTPUT_IO_1, st_LED);
+            st_LED = !st_LED;
+            gpio_set_level(GPIO_OUTPUT_IO_1, st_LED);
         }
         free(buf);
     }
@@ -165,15 +155,9 @@ httpd_handle_t start_webserver(void)
 ***************************************/
 void pwm_config()
 {
-    pwm_init(PWM_PERIOD, duties_init, 4, pin_num);
-    pwm_set_phases(phase_init);
+    pwm_init(PWM_PERIOD, duties, 4, pin_num);
+    pwm_set_phases(phase);
     pwm_start();
-}
-
-void pwm_run()
-{
-    pwm_set_duty(0, dtyCyl_u32[0]);
-    
     int16_t count = 0;
 
     while (1) {
@@ -221,8 +205,5 @@ void app_main()
     /***************************************
     *** Loop functions
     ***************************************/
-    while(1)
-    {
-        pwm_run();
-    }
+    //while(1){}
 }
