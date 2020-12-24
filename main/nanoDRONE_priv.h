@@ -10,8 +10,8 @@
 #define PWM_1_OUT_IO_NUM   13
 #define PWM_2_OUT_IO_NUM   14
 #define PWM_3_OUT_IO_NUM   15
-#define GPIO_OUTPUT_IO_1    16
 
+#define GPIO_OUTPUT_IO_1    16
 
 #define GPIO_OUTPUT_PIN_SEL  ((1ULL<<GPIO_OUTPUT_IO_1))
 
