@@ -19,6 +19,9 @@
 #define EXAMPLE_ESP_WIFI_PASS      "123456789"
 #define EXAMPLE_MAX_STA_CONN       1
 
+#define FACTOR_MILLI    1000
+#define FACTOR_MICRO    1000 * FACTOR_MILLI
+
 // pwm pin number
 const uint32_t pin_num[4] = {
     PWM_0_OUT_IO_NUM,
@@ -29,7 +32,7 @@ const uint32_t pin_num[4] = {
 
 // duties table, real_duty = duties[x]/PERIOD
 uint32_t duties[4] = {
-    (1 * (10^6)), (1 * (10^6)), (1 * (10^6)), (1 * (10^6)),
+    (1 * FACTOR_MICRO), (1 * FACTOR_MICRO), (1 * FACTOR_MICRO), (1 * FACTOR_MICRO),
 };
 
 // phase table, delay = (phase[x]/360)*PERIOD
@@ -38,4 +41,4 @@ float phase[4] = {
 };
 
 // PWM period in us
-#define PWM_PERIOD    (1 * (10^6))
+#define PWM_PERIOD    (1 * FACTOR_MICRO) //1 second
