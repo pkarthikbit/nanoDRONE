@@ -32,7 +32,7 @@ const uint32_t pin_num[4] = {
 
 // duties table, real_duty = duties[x]/PERIOD
 uint32_t duties[4] = {
-    500, 500, 500, 500,
+    1000, 1000, 1000, 1000,
 };
 
 // phase table, delay = (phase[x]/360)*PERIOD

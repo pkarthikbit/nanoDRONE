@@ -120,7 +120,7 @@ esp_err_t power_get_handler(httpd_req_t *req)
                 
                 buf_int = (size_t)(buf_char[0] - '0');
 
-                if(buf_int == 0)
+                if(buf_int > 0)
                 {
                     //LED off
                     gpio_set_level(GPIO_OUTPUT_IO_1, true);
