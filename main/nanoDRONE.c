@@ -124,22 +124,21 @@ esp_err_t power_get_handler(httpd_req_t *req)
                 {
                     //LED off
                     gpio_set_level(GPIO_OUTPUT_IO_1, true);
-
-                    // channel0, 1 output hight level.
-                    // channel2, 3 output low level.
-                    pwm_stop(0x3);
                 }
                 else
                 {
                     //LED on
                     gpio_set_level(GPIO_OUTPUT_IO_1, false);
-
-                    // channel0, 1 output hight level.
-                    // channel2, 3 output low level.
-                    pwm_stop(0x3);
-                    pwm_set_duty(0, (buf_int/100 * FACTOR_MICRO));
-                    pwm_start();
                 }
+
+                // channel0, 1 output hight level.
+                // channel2, 3 output low level.
+                pwm_stop(0x3);
+                pwm_set_duty(0, (buf_int));
+                pwm_set_duty(1, (buf_int));
+                pwm_set_duty(2, (buf_int));
+                pwm_set_duty(3, (buf_int));
+                pwm_start();
             }
             free(buf_char);
         }
