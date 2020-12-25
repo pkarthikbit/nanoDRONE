@@ -14,7 +14,7 @@
 ***************************************/
 static const char *TAG = "nanoDRONE";
 static httpd_handle_t server = NULL;
-static bool st_LED;
+
 /***************************************
 *** Configure pins
 ***************************************/
@@ -92,24 +92,57 @@ void wifi_init_softap()
 /* An HTTP GET handler */
 esp_err_t power_get_handler(httpd_req_t *req)
 {
-    char*  buf;
-    size_t buf_len;
+    char*  buf_char;
+    size_t buf_len, buf_int;
 
     /* Get header value string length and allocate memory for length + 1,
      * extra byte for null termination */
     buf_len = httpd_req_get_hdr_value_len(req, "Host") + 1;
     if (buf_len > 1) 
     {
-        buf = malloc(buf_len);
+        buf_char = malloc(buf_len);
         /* Copy null terminated value string into buffer */
-        if (httpd_req_get_hdr_value_str(req, "Host", buf, buf_len) == ESP_OK) 
+        if (httpd_req_get_hdr_value_str(req, "Host", buf_char, buf_len) == ESP_OK) 
         {
-            ESP_LOGI(TAG, "Found header => Host: %s", buf);
-
-            st_LED = !st_LED;
-            gpio_set_level(GPIO_OUTPUT_IO_1, st_LED);
+            ESP_LOGI(TAG, "from tester: %s", buf_char);            
         }
-        free(buf);
+        free(buf_char);
+
+        /* Read URL query string length and allocate memory for length + 1,
+        * extra byte for null termination */
+        buf_len = httpd_req_get_url_query_len(req) + 1;
+        if (buf_len > 1) 
+        {
+            buf_char = malloc(buf_len);
+            if (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK) 
+            {
+                ESP_LOGI(TAG, "value received => %s", buf_char);
+                
+                buf_int = (size_t)(buf_char[0] - '0');
+
+                if(buf_int == 0)
+                {
+                    //LED off
+                    gpio_set_level(GPIO_OUTPUT_IO_1, true);
+
+                    // channel0, 1 output hight level.
+                    // channel2, 3 output low level.
+                    pwm_stop(0x3);
+                }
+                else
+                {
+                    //LED on
+                    gpio_set_level(GPIO_OUTPUT_IO_1, false);
+
+                    // channel0, 1 output hight level.
+                    // channel2, 3 output low level.
+                    pwm_stop(0x3);
+                    pwm_set_duty(0, (buf_int/100 * FACTOR_MICRO));
+                    pwm_start();
+                }
+            }
+            free(buf_char);
+        }
     }
 
     /* Send response with custom headers and body set as the
@@ -158,23 +191,6 @@ void pwm_config()
     pwm_init(PWM_PERIOD, duties, 4, pin_num);
     pwm_set_phases(phase);
     pwm_start();
-    int16_t count = 0;
-
-    while (1) {
-        if (count == 20) {
-            // channel0, 1 output hight level.
-            // channel2, 3 output low level.
-            pwm_stop(0x3);
-            ESP_LOGI(TAG, "PWM stop\n");
-        } else if (count == 30) {
-            pwm_start();
-            ESP_LOGI(TAG, "PWM re-start\n");
-            count = 0;
-        }
-
-        count++;
-        vTaskDelay(1000 / portTICK_RATE_MS);
-    }
 }
 
 /***************************************
