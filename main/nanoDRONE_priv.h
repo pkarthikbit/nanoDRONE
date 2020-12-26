@@ -27,12 +27,12 @@ const uint32_t pin_num[4] = {
     PWM_3_OUT_IO_NUM
 };
 
-// Frequency is 1000 Hz PWM, period is 1000
-#define PWM_PERIOD    1000 //us
+// Frequency is 1/256*10^-6 Hz PWM, period is 256
+#define PWM_PERIOD    256 //us
 
 // duties table, real_duty = duties[x]/PERIOD
 uint32_t duties[4] = {
-    2000, 2000, 2000, 2000,
+    0, 0, 0, 0,
 };
 
 // phase table, delay = (phase[x]/360)*PERIOD

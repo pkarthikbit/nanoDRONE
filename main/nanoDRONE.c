@@ -117,8 +117,7 @@ esp_err_t power_get_handler(httpd_req_t *req)
             if (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK) 
             {
                 ESP_LOGI(TAG, "value received => %s", buf_char);
-                
-                buf_int = (size_t)(buf_char[0] - '0');
+                buf_int = atoi(buf_char);
 
                 if(buf_int > 0)
                 {
@@ -133,7 +132,6 @@ esp_err_t power_get_handler(httpd_req_t *req)
 
                 // channel0, 1 output hight level.
                 // channel2, 3 output low level.
-                pwm_stop(0x3);
                 pwm_set_duty(0, (buf_int));
                 pwm_set_duty(1, (buf_int));
                 pwm_set_duty(2, (buf_int));
