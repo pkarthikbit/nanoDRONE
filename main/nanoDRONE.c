@@ -215,6 +215,9 @@ void app_main()
 
         /* PWM config */
         pwm_config();
+
+        //LED off
+        gpio_set_level(GPIO_OUTPUT_IO_1, true);
     }
    
     /***************************************

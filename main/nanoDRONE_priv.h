@@ -6,7 +6,7 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
-#define PWM_0_OUT_IO_NUM   2
+#define PWM_0_OUT_IO_NUM   12
 #define PWM_1_OUT_IO_NUM   13
 #define PWM_2_OUT_IO_NUM   14
 #define PWM_3_OUT_IO_NUM   15
@@ -32,7 +32,7 @@ const uint32_t pin_num[4] = {
 
 // duties table, real_duty = duties[x]/PERIOD
 uint32_t duties[4] = {
-    1000, 1000, 1000, 1000,
+    2000, 2000, 2000, 2000,
 };
 
 // phase table, delay = (phase[x]/360)*PERIOD
