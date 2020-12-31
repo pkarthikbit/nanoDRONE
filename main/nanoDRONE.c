@@ -130,6 +130,16 @@ esp_err_t power_get_handler(httpd_req_t *req)
                     gpio_set_level(GPIO_OUTPUT_IO_1, false);
                 }
 
+                //there is no resistor connected b/w the motor and the npn. So, limit the voltage with PWM
+                if(buf_int > 220)
+                {
+                    buf_int = 220;
+                }
+                else
+                {
+                    /* do nothing */
+                }
+                
                 // channel0, 1 output hight level.
                 // channel2, 3 output low level.
                 pwm_set_duty(0, (buf_int));
