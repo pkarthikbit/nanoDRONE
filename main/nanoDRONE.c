@@ -90,83 +90,83 @@ void wifi_init_softap()
 *** http server
 ***************************************/
 /* An HTTP GET handler */
-esp_err_t power_get_handler(httpd_req_t *req)
+esp_err_t data_get_handler(httpd_req_t *req)
 {
     char*  buf_char;
     size_t buf_len, buf_int;
+    const char* resp_str;      //return value
 
-    /* Get header value string length and allocate memory for length + 1,
-     * extra byte for null termination */
-    buf_len = httpd_req_get_hdr_value_len(req, "Host") + 1;
-    if (buf_len > 1) 
+    //Default value
+    resp_str = "0x7F10";
+
+    /* Read URL query string length and allocate memory for length + 1,
+    * extra byte for null termination */
+    buf_len = httpd_req_get_url_query_len(req) + 1;
+    if (buf_len == 9) //in hex 32bits = 8 characters + 1 (as above)
     {
         buf_char = malloc(buf_len);
-        /* Copy null terminated value string into buffer */
-        if (httpd_req_get_hdr_value_str(req, "Host", buf_char, buf_len) == ESP_OK) 
+        if (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK) 
         {
-            ESP_LOGI(TAG, "from tester: %s", buf_char);            
-        }
-        free(buf_char);
+            ESP_LOGI(TAG, "value received => %s", buf_char);
+            buf_int = atoi(buf_char);
 
-        /* Read URL query string length and allocate memory for length + 1,
-        * extra byte for null termination */
-        buf_len = httpd_req_get_url_query_len(req) + 1;
-        if (buf_len > 1) 
-        {
-            buf_char = malloc(buf_len);
-            if (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK) 
+            if(buf_int > 0)
             {
-                ESP_LOGI(TAG, "value received => %s", buf_char);
-                buf_int = atoi(buf_char);
-
-                if(buf_int > 0)
-                {
-                    //LED off
-                    gpio_set_level(GPIO_OUTPUT_IO_1, true);
-                }
-                else
-                {
-                    //LED on
-                    gpio_set_level(GPIO_OUTPUT_IO_1, false);
-                }
-
-                //there is no resistor connected b/w the motor and the npn. So, limit the voltage with PWM
-                if(buf_int > 220)
-                {
-                    buf_int = 220;
-                }
-                else
-                {
-                    /* do nothing */
-                }
-                
-                // channel0, 1 output hight level.
-                // channel2, 3 output low level.
-                pwm_set_duty(0, (buf_int));
-                pwm_set_duty(1, (buf_int));
-                pwm_set_duty(2, (buf_int));
-                pwm_set_duty(3, (buf_int));
-                pwm_start();
+                //LED off
+                gpio_set_level(GPIO_OUTPUT_IO_1, true);
             }
-            free(buf_char);
-        }
-    }
+            else
+            {
+                //LED on
+                gpio_set_level(GPIO_OUTPUT_IO_1, false);
+            }
 
+            //there is no resistor connected b/w the motor and the npn. So, limit the voltage with PWM
+            if(buf_int > 220)
+            {
+                buf_int = 220;
+            }
+            else
+            {
+                /* do nothing */
+            }
+            
+            // channel0, 1 output hight level.
+            // channel2, 3 output low level.
+            pwm_set_duty(0, (buf_int));
+            pwm_set_duty(1, (buf_int));
+            pwm_set_duty(2, (buf_int));
+            pwm_set_duty(3, (buf_int));
+            pwm_start();
+
+            resp_str = 0x00;
+        }
+        else
+        {
+            resp_str = "0x7F31";
+        }
+        
+        free(buf_char);
+    }
+    else
+    {
+        resp_str = "0x7F13";
+    }
+        
     /* Send response with custom headers and body set as the
      * string passed in user context*/
-    const char* resp_str = (const char*) req->user_ctx;
     httpd_resp_send(req, resp_str, strlen(resp_str));
 
     return ESP_OK;
 }
 
-httpd_uri_t power = {
-    .uri       = "/power",
+httpd_uri_t data = {
+    .uri       = "/data",
     .method    = HTTP_GET,
-    .handler   = power_get_handler,
+    .handler   = data_get_handler,
     /* Let's pass response string in user
      * context to demonstrate it's usage */
-    .user_ctx  = "power_success"
+    .user_ctx  = "0x7F10"
 };
 
 /* generic functions */
@@ -180,7 +180,7 @@ httpd_handle_t start_webserver(void)
     {
         // Set URI handlers
         ESP_LOGI(TAG, "Registering URI handlers");
-        httpd_register_uri_handler(server, &power);
+        httpd_register_uri_handler(server, &data);
         return server;
     }
     else
