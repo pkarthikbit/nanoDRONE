@@ -107,24 +107,13 @@ esp_err_t data_get_handler(httpd_req_t *req)
         buf_char = malloc(buf_len);
         if (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK) 
         {
-            ESP_LOGI(TAG, "value received => %s", buf_char);
             buf_int = atoi(buf_char);
-
-            if(buf_int > 0)
-            {
-                //LED off
-                gpio_set_level(GPIO_OUTPUT_IO_1, true);
-            }
-            else
-            {
-                //LED on
-                gpio_set_level(GPIO_OUTPUT_IO_1, false);
-            }
+            ESP_LOGI(TAG, "value received => %d", buf_int);
 
             //there is no resistor connected b/w the motor and the npn. So, limit the voltage with PWM
             if(buf_int > 220)
             {
-                buf_int = 220;
+                buf_int = 100;
             }
             else
             {
@@ -137,9 +126,10 @@ esp_err_t data_get_handler(httpd_req_t *req)
             pwm_set_duty(1, (buf_int));
             pwm_set_duty(2, (buf_int));
             pwm_set_duty(3, (buf_int));
+
             pwm_start();
 
-            resp_str = 0x00;
+            resp_str = "0x00";
         }
         else
         {
