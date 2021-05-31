@@ -102,7 +102,7 @@ esp_err_t data_get_handler(httpd_req_t *req)
     /* Read URL query string length and allocate memory for length + 1,
     * extra byte for null termination */
     buf_len = httpd_req_get_url_query_len(req) + 1;
-    if (buf_len == 9) //in hex 32bits = 8 characters + 1 (as above)
+    if (buf_len == 5) //in hex 16bits = 4 characters + 1 (as above)
     {
         buf_char = malloc(buf_len);
         if (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK) 
@@ -129,7 +129,7 @@ esp_err_t data_get_handler(httpd_req_t *req)
 
             pwm_start();
 
-            resp_str = "0x00";
+            resp_str = "0x0000";
         }
         else
         {
