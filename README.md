@@ -43,4 +43,5 @@ Drone Response Code:
 0x0000 = Positive response
 0x7F10 = Negative response - General reject
 0x7F13 = Negative response - Request Length incorrect
+0x7F22 = Negative response - Condition not correct
 0x7F31 = Negative response - Request out of range
