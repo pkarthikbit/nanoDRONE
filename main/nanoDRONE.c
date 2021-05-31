@@ -18,7 +18,7 @@ static httpd_handle_t server = NULL;
 /***************************************
 *** Configure pins
 ***************************************/
-void pin_config()
+void nanoDRONE_pin_config()
 {
     /* pin 16 LED */
     gpio_config_t io_conf;
@@ -166,7 +166,7 @@ httpd_handle_t start_webserver(void)
 /***************************************
 *** PWM Configuration
 ***************************************/
-void pwm_config()
+void nanoDRONE_pwm_config()
 {
     pwm_init(PWM_PERIOD, duties, 4, pin_num);
     pwm_set_phases(phase);
@@ -186,7 +186,7 @@ void app_main()
         ESP_ERROR_CHECK(esp_netif_init());
 
         /* Configure the pins */
-        pin_config();
+        nanoDRONE_pin_config();
 
         /* setup SoftAp */
         wifi_init_softap();
@@ -195,7 +195,7 @@ void app_main()
         server = start_webserver();
 
         /* PWM config */
-        pwm_config();
+        nanoDRONE_pwm_config();
 
         //LED off
         gpio_set_level(GPIO_OUTPUT_IO_1, true);

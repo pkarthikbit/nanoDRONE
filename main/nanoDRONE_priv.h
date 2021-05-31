@@ -40,6 +40,7 @@ float phase[4] = {
     0, 0, 0, 0,
 };
 
+//Bit masks for Controller request
 #define DRONE_POWER         1       //bit0 = Power On/ Off
 #define DRONE_FLY_N         2       //bit1 = North
 #define DRONE_FLY_E         4       //bit2 = East
