@@ -40,4 +40,20 @@ float phase[4] = {
     0, 0, 0, 0,
 };
 
-
+#define DRONE_POWER         1       //bit0 = Power On/ Off
+#define DRONE_FLY_N         2       //bit1 = North
+#define DRONE_FLY_E         4       //bit2 = East
+#define DRONE_FLY_W         8       //bit3 = West
+#define DRONE_FLY_S        10       //bit4 = South
+#define DRONE_FLY_NE       20       //bit5 = North East
+#define DRONE_FLY_NW       40       //bit6 = North West
+#define DRONE_FLY_SE       80       //bit7 = South East
+#define DRONE_FLY_SW      100       //bit8 = South West
+#define DRONE_FLY_UP      200       //bit9 = Up
+#define DRONE_FLY_DOWN    400       //bit10 = Down
+#define DRONE_FLY_CW      800       //bit11 = ClockWise rotation
+#define DRONE_FLY_CCW    1000       //bit12 = Counter ClockWise rotation
+//<reserved>             2000       //bit13 = <reserved>
+//<reserved>             4000       //bit14 = <reserved>
+//<reserved>             8000       //bit15 = <reserved>
+                                                     
