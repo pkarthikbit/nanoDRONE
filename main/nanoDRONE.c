@@ -16,27 +16,6 @@ static const char *TAG = "nanoDRONE";
 static httpd_handle_t server = NULL;
 
 /***************************************
-*** Configure pins
-***************************************/
-void nanoDRONE_pin_config()
-{
-    /* pin 16 LED */
-    gpio_config_t io_conf;
-    //disable interrupt
-    io_conf.intr_type = GPIO_INTR_DISABLE;
-    //set as output mode
-    io_conf.mode = GPIO_MODE_OUTPUT;
-    //bit mask of the pins that you want to set,e.g.GPIO15/16
-    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;
-    //disable pull-down mode
-    io_conf.pull_down_en = 0;
-    //disable pull-up mode
-    io_conf.pull_up_en = 0;
-    //configure GPIO with the given settings
-    gpio_config(&io_conf);
-}
-
-/***************************************
 *** setup softap
 ***************************************/
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
@@ -93,7 +72,7 @@ void wifi_init_softap()
 esp_err_t data_get_handler(httpd_req_t *req)
 {
     char*  buf_char;
-    size_t buf_len, buf_int;
+    int32_t buf_len, buf_int;
     const char* resp_str;      //return value
 
     //Default value
@@ -108,6 +87,8 @@ esp_err_t data_get_handler(httpd_req_t *req)
     {
         buf_int = atoi(buf_char);
         ESP_LOGI(TAG, "value received => %d", buf_int);
+
+
 
         // channel0, 1 output hight level.
         // channel2, 3 output low level.
@@ -161,6 +142,27 @@ httpd_handle_t start_webserver(void)
         ESP_LOGI(TAG, "Error starting server!");
         return NULL;
     }
+}
+
+/***************************************
+*** Configure pins
+***************************************/
+void nanoDRONE_pin_config()
+{
+    /* pin 16 LED */
+    gpio_config_t io_conf;
+    //disable interrupt
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    //set as output mode
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    //bit mask of the pins that you want to set,e.g.GPIO15/16
+    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;
+    //disable pull-down mode
+    io_conf.pull_down_en = 0;
+    //disable pull-up mode
+    io_conf.pull_up_en = 0;
+    //configure GPIO with the given settings
+    gpio_config(&io_conf);
 }
 
 /***************************************
