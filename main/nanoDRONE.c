@@ -14,6 +14,49 @@
 ***************************************/
 static const char *TAG = "nanoDRONE";
 static httpd_handle_t server = NULL;
+static const char* resp_str;      //return value
+
+/***************************************
+*** Configure pins
+***************************************/
+void nanoDRONE_pin_config()
+{
+    /* pin 16 LED */
+    gpio_config_t io_conf;
+    //disable interrupt
+    io_conf.intr_type = GPIO_INTR_DISABLE;
+    //set as output mode
+    io_conf.mode = GPIO_MODE_OUTPUT;
+    //bit mask of the pins that you want to set,e.g.GPIO15/16
+    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;
+    //disable pull-down mode
+    io_conf.pull_down_en = 0;
+    //disable pull-up mode
+    io_conf.pull_up_en = 0;
+    //configure GPIO with the given settings
+    gpio_config(&io_conf);
+}
+
+/***************************************
+*** PWM Configuration
+***************************************/
+void nanoDRONE_pwm_config()
+{
+    pwm_init(PWM_PERIOD, duties, 4, pin_num);
+    pwm_set_phases(phase);
+    pwm_start();
+}
+
+/***************************************
+*** Option selector
+***************************************/
+void nanoDRONE_option_sel(int32_t buf_int)
+{
+    ESP_LOGI(TAG, "value received => %d", buf_int);
+
+    //Default value
+    resp_str = "0x7F10";
+}
 
 /***************************************
 *** setup softap
@@ -73,7 +116,6 @@ esp_err_t data_get_handler(httpd_req_t *req)
 {
     char*  buf_char;
     int32_t buf_len, buf_int;
-    const char* resp_str;      //return value
 
     //Default value
     resp_str = "0x7F10";
@@ -86,9 +128,7 @@ esp_err_t data_get_handler(httpd_req_t *req)
         (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK))
     {
         buf_int = atoi(buf_char);
-        ESP_LOGI(TAG, "value received => %d", buf_int);
-
-
+        nanoDRONE_option_sel(buf_int);
 
         // channel0, 1 output hight level.
         // channel2, 3 output low level.
@@ -142,37 +182,6 @@ httpd_handle_t start_webserver(void)
         ESP_LOGI(TAG, "Error starting server!");
         return NULL;
     }
-}
-
-/***************************************
-*** Configure pins
-***************************************/
-void nanoDRONE_pin_config()
-{
-    /* pin 16 LED */
-    gpio_config_t io_conf;
-    //disable interrupt
-    io_conf.intr_type = GPIO_INTR_DISABLE;
-    //set as output mode
-    io_conf.mode = GPIO_MODE_OUTPUT;
-    //bit mask of the pins that you want to set,e.g.GPIO15/16
-    io_conf.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;
-    //disable pull-down mode
-    io_conf.pull_down_en = 0;
-    //disable pull-up mode
-    io_conf.pull_up_en = 0;
-    //configure GPIO with the given settings
-    gpio_config(&io_conf);
-}
-
-/***************************************
-*** PWM Configuration
-***************************************/
-void nanoDRONE_pwm_config()
-{
-    pwm_init(PWM_PERIOD, duties, 4, pin_num);
-    pwm_set_phases(phase);
-    pwm_start();
 }
 
 /***************************************
