@@ -99,43 +99,26 @@ esp_err_t data_get_handler(httpd_req_t *req)
     //Default value
     resp_str = "0x7F10";
 
-    /* Read URL query string length and allocate memory for length + 1,
-    * extra byte for null termination */
-    buf_len = httpd_req_get_url_query_len(req) + 1;
-    if (buf_len == 5) //in hex 16bits = 4 characters + 1 (as above)
+    /* Read URL query string length and allocate memory for length */
+    buf_len = httpd_req_get_url_query_len(req);
+    buf_char = malloc(buf_len);
+
+    if ((buf_len == 4) &&
+        (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK))
     {
-        buf_char = malloc(buf_len);
-        if (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK) 
-        {
-            buf_int = atoi(buf_char);
-            ESP_LOGI(TAG, "value received => %d", buf_int);
+        buf_int = atoi(buf_char);
+        ESP_LOGI(TAG, "value received => %d", buf_int);
 
-            //there is no resistor connected b/w the motor and the npn. So, limit the voltage with PWM
-            if(buf_int > 220)
-            {
-                buf_int = 100;
-            }
-            else
-            {
-                /* do nothing */
-            }
-            
-            // channel0, 1 output hight level.
-            // channel2, 3 output low level.
-            pwm_set_duty(0, (buf_int));
-            pwm_set_duty(1, (buf_int));
-            pwm_set_duty(2, (buf_int));
-            pwm_set_duty(3, (buf_int));
+        // channel0, 1 output hight level.
+        // channel2, 3 output low level.
+        pwm_set_duty(0, 100);
+        pwm_set_duty(1, 100);
+        pwm_set_duty(2, 100);
+        pwm_set_duty(3, 100);
 
-            pwm_start();
+        pwm_start();
 
-            resp_str = "0x0000";
-        }
-        else
-        {
-            resp_str = "0x7F31";
-        }
-        
+        resp_str = "0x0000";      
         free(buf_char);
     }
     else
