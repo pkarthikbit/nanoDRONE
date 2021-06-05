@@ -45,3 +45,7 @@ Drone Response Code:
 0x7F13 = Negative response - Request Length incorrect
 0x7F22 = Negative response - Condition not correct
 0x7F31 = Negative response - Request out of range
+
+Android remote app:
+https://github.com/lacour-vincent/wifi-car-esp8266
+
