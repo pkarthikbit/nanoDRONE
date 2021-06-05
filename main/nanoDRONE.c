@@ -1,11 +1,9 @@
 /* nanoDRONE 
+ * This Prototype code is in the Public Domain (or CC0 licensed, at your option.)
+ * Unless required by applicable law or agreed to in writing, this
+ * software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. */
 
-   This Prototype code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include "nanoDRONE_inf.h"
 #include "nanoDRONE_priv.h"
 
@@ -14,7 +12,8 @@
 ***************************************/
 static const char *TAG = "nanoDRONE";
 static httpd_handle_t server = NULL;
-static const char* resp_str;      //return value
+static const char* resp_str;      //return 
+static uint32_t def_motor_speed[4]; //Present motor speed
 
 /***************************************
 *** Configure pins
@@ -48,14 +47,115 @@ void nanoDRONE_pwm_config()
 }
 
 /***************************************
+*** Set motor speed
+***************************************/
+void nanoDRONE_motorSpeed_set(uint32_t speed_D5, uint32_t speed_D6, uint32_t speed_D7, uint32_t speed_D8)
+{
+    //Default value
+    resp_str = "0x7F10";
+
+    /* channel0, 1 output hight level.
+    * channel2, 3 output low level */
+    pwm_set_duty(MOTOR_D5, speed_D5);
+    pwm_set_duty(MOTOR_D6, speed_D6);
+    pwm_set_duty(MOTOR_D7, speed_D7);
+    pwm_set_duty(MOTOR_D8, speed_D8);
+
+    pwm_start();
+
+    /* update to static variable */
+    def_motor_speed[0] = speed_D5;
+    def_motor_speed[1] = speed_D6;
+    def_motor_speed[2] = speed_D7;
+    def_motor_speed[3] = speed_D8;
+
+    //E_OK
+    resp_str = "0x0000"; 
+}
+
+/***************************************
 *** Option selector
 ***************************************/
 void nanoDRONE_option_sel(int32_t buf_int)
 {
     ESP_LOGI(TAG, "value received => %d", buf_int);
-
     //Default value
     resp_str = "0x7F10";
+
+    /* check if Drone power has to be on */
+    if(buf_int & DRONE_POWER)
+    {
+        /******* North West (D6) ***** North ***** North East (D5) *******
+         *****************************************************************
+         ************************* NodeMCU Front *************************
+         *****************************************************************
+         *******    West    ***************       East   *****************
+         *****************************************************************
+         ************ nanoDRONE_motorSpeed_set (D5, D6, D7, D8) **********
+         *****************************************************************
+         ******* South West (D7) ***** South ***** South East (D8) *******/
+        if(buf_int & DRONE_FLY_N)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }
+        else if(buf_int & DRONE_FLY_E)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }        
+        else if(buf_int & DRONE_FLY_W)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }        
+        else if(buf_int & DRONE_FLY_S)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }        
+        else if(buf_int & DRONE_FLY_NE)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }        
+        else if(buf_int & DRONE_FLY_NW)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }        
+        else if(buf_int & DRONE_FLY_SE)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }        
+        else if(buf_int & DRONE_FLY_SW)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }
+        else if(buf_int & DRONE_FLY_UP)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }        
+        else if(buf_int & DRONE_FLY_DOWN)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }
+        else if(buf_int & DRONE_FLY_CW)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }        
+        else if(buf_int & DRONE_FLY_CCW)
+        {
+            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        }
+        else
+        {
+            resp_str = "0x7F31";
+        }
+    }
+    else
+    {
+        /* power off all the motors */
+        nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+    }
+    
+
+
+    resp_str = "0x0000";  
 }
 
 /***************************************
@@ -129,18 +229,8 @@ esp_err_t data_get_handler(httpd_req_t *req)
     {
         buf_int = atoi(buf_char);
         nanoDRONE_option_sel(buf_int);
-
-        // channel0, 1 output hight level.
-        // channel2, 3 output low level.
-        pwm_set_duty(0, 100);
-        pwm_set_duty(1, 100);
-        pwm_set_duty(2, 100);
-        pwm_set_duty(3, 100);
-
-        pwm_start();
-
-        resp_str = "0x0000";      
         free(buf_char);
+        /* resp_str is updated in nanoDRONE_option_sel() */
     }
     else
     {
