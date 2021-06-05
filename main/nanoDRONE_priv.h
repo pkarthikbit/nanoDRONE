@@ -6,10 +6,16 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
-#define PWM_0_OUT_IO_NUM   12
-#define PWM_1_OUT_IO_NUM   13
-#define PWM_2_OUT_IO_NUM   14
-#define PWM_3_OUT_IO_NUM   15
+#define PWM_D5_OUT_IO_NUM   14
+#define PWM_D6_OUT_IO_NUM   12
+#define PWM_D7_OUT_IO_NUM   13
+#define PWM_D8_OUT_IO_NUM   15
+
+/* Used to set the Motor rpm based on the client request */
+#define MOTOR_D5    0
+#define MOTOR_D6    1
+#define MOTOR_D7    2
+#define MOTOR_D8    3
 
 #define GPIO_OUTPUT_IO_1    16
 
@@ -21,10 +27,10 @@
 
 // pwm pin number
 const uint32_t pin_num[4] = {
-    PWM_0_OUT_IO_NUM,
-    PWM_1_OUT_IO_NUM,
-    PWM_2_OUT_IO_NUM,
-    PWM_3_OUT_IO_NUM
+    PWM_D5_OUT_IO_NUM,
+    PWM_D6_OUT_IO_NUM,
+    PWM_D7_OUT_IO_NUM,
+    PWM_D8_OUT_IO_NUM
 };
 
 // Frequency is 1/256*10^-6 Hz PWM, period is 256
