@@ -58,6 +58,7 @@ void nanoDRONE_motorSpeed_set(uint32_t new_speed_D5, uint32_t new_speed_D6, uint
     //Default value
     resp_str = "0x7F10";
 
+    //Get the current speed of the motor - first time
     pwm_get_duty(MOTOR_D5, &old_speed_D5);
     pwm_get_duty(MOTOR_D6, &old_speed_D6);
     pwm_get_duty(MOTOR_D7, &old_speed_D7);
@@ -72,25 +73,31 @@ void nanoDRONE_motorSpeed_set(uint32_t new_speed_D5, uint32_t new_speed_D6, uint
         * channel2, 3 output low level */
         if(old_speed_D5 != new_speed_D5)
         {
-            pwm_set_duty(MOTOR_D5, (old_speed_D5 < new_speed_D5)?(old_speed_D5+1):(old_speed_D5-1));
+            pwm_set_duty(MOTOR_D5, (old_speed_D5 < new_speed_D5)?(old_speed_D5+10):(old_speed_D5-10));
         }
 
         if(old_speed_D6 != new_speed_D6)
         {
-            pwm_set_duty(MOTOR_D6, (old_speed_D6 < new_speed_D6)?(old_speed_D6+1):(old_speed_D6-1));
+            pwm_set_duty(MOTOR_D6, (old_speed_D6 < new_speed_D6)?(old_speed_D6+10):(old_speed_D6-10));
         }
 
         if(old_speed_D7 != new_speed_D7)
         {
-            pwm_set_duty(MOTOR_D7, (old_speed_D7 < new_speed_D7)?(old_speed_D7+1):(old_speed_D7-1));
+            pwm_set_duty(MOTOR_D7, (old_speed_D7 < new_speed_D7)?(old_speed_D7+10):(old_speed_D7-10));
         }
 
         if(old_speed_D8 != new_speed_D8)
         {
-            pwm_set_duty(MOTOR_D8, (old_speed_D8 < new_speed_D8)?(old_speed_D8+1):(old_speed_D8-1));
+            pwm_set_duty(MOTOR_D8, (old_speed_D8 < new_speed_D8)?(old_speed_D8+10):(old_speed_D8-10));
         }
 
         pwm_start();
+
+        //Get the current speed of the motor
+        pwm_get_duty(MOTOR_D5, &old_speed_D5);
+        pwm_get_duty(MOTOR_D6, &old_speed_D6);
+        pwm_get_duty(MOTOR_D7, &old_speed_D7);
+        pwm_get_duty(MOTOR_D8, &old_speed_D8);
     }
 
     //E_OK
@@ -121,34 +128,42 @@ void nanoDRONE_option_sel(int32_t buf_int)
         if(buf_int & DRONE_FLY_N)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x0002"; 
         }
         else if(buf_int & DRONE_FLY_E)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x0004"; 
         }        
         else if(buf_int & DRONE_FLY_W)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x0008"; 
         }        
         else if(buf_int & DRONE_FLY_S)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x0016";
         }        
         else if(buf_int & DRONE_FLY_NE)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x0032";
         }        
         else if(buf_int & DRONE_FLY_NW)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x0064";
         }        
         else if(buf_int & DRONE_FLY_SE)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x0128";
         }        
         else if(buf_int & DRONE_FLY_SW)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x0256";
         }
         else if(buf_int & DRONE_FLY_UP)
         {
@@ -158,10 +173,12 @@ void nanoDRONE_option_sel(int32_t buf_int)
         else if(buf_int & DRONE_FLY_DOWN)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x1024";
         }
         else if(buf_int & DRONE_FLY_CW)
         {
             nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            resp_str = "0x2048";
         }        
         else if(buf_int & DRONE_FLY_CCW)
         {
@@ -178,9 +195,10 @@ void nanoDRONE_option_sel(int32_t buf_int)
     {
         /* power off all the motors */
         nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+        resp_str = "0x0000"; 
     }
-    
-    resp_str = "0x0000";  
+
+    //resp_str = "0x0000";
 }
 
 /***************************************
