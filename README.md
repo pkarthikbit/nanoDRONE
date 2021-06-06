@@ -16,11 +16,11 @@ Below are the commands:
 4. make flash monitor
 
 Controller request format:
-Cmdline --> curl http://192.168.4.1/data?xxxx
-Browser --> http://192.168.4.1/data?xxxx
+Cmdline --> curl http://192.168.4.1/data?xxxxx
+Browser --> http://192.168.4.1/data?xxxxx
 
 where,
-xxxx is a 2byte bit mapped data
+xxxxx is a 2byte bit mapped data in decimal (0 to 65535)
 
 bit0 = Power On/ Off
 bit1 = North

@@ -153,6 +153,7 @@ void nanoDRONE_option_sel(int32_t buf_int)
         else if(buf_int & DRONE_FLY_UP)
         {
             nanoDRONE_motorSpeed_set(100, 100, 100, 100);
+            resp_str = "0x0512";
         }        
         else if(buf_int & DRONE_FLY_DOWN)
         {
@@ -179,8 +180,6 @@ void nanoDRONE_option_sel(int32_t buf_int)
         nanoDRONE_motorSpeed_set(0, 0, 0, 0);
     }
     
-
-
     resp_str = "0x0000";  
 }
 
@@ -246,23 +245,30 @@ esp_err_t data_get_handler(httpd_req_t *req)
     //Default value
     resp_str = "0x7F10";
 
-    /* Read URL query string length and allocate memory for length */
-    buf_len = httpd_req_get_url_query_len(req);
-    buf_char = malloc(buf_len);
+    /* Read URL query string length and allocate memory for length + 1,
+    * extra byte for null termination */
+    buf_len = httpd_req_get_url_query_len(req) + 1;
 
-    if ((buf_len == 4) &&
-        (httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK))
+    if (buf_len == 6)
     {
-        buf_int = atoi(buf_char);
-        nanoDRONE_option_sel(buf_int);
-        free(buf_char);
-        /* resp_str is updated in nanoDRONE_option_sel() */
+        buf_char = malloc(buf_len);
+        if(httpd_req_get_url_query_str(req, buf_char, buf_len) == ESP_OK)
+        {
+            buf_int = atoi(buf_char);
+            nanoDRONE_option_sel(buf_int);
+            free(buf_char);
+            /* resp_str is updated in nanoDRONE_option_sel() */       
+        }
+        else
+        {
+            resp_str = "0x7F14";
+        }   
     }
     else
     {
         resp_str = "0x7F13";
     }
-        
+            
     /* Send response with custom headers and body set as the
      * string passed in user context*/
     httpd_resp_send(req, resp_str, strlen(resp_str));
