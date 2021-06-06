@@ -13,7 +13,6 @@
 static const char *TAG = "nanoDRONE";
 static httpd_handle_t server = NULL;
 static const char* resp_str;      //return 
-static uint32_t def_motor_speed[4]; //Present motor speed
 
 /***************************************
 *** Configure pins
@@ -49,25 +48,50 @@ void nanoDRONE_pwm_config()
 /***************************************
 *** Set motor speed
 ***************************************/
-void nanoDRONE_motorSpeed_set(uint32_t speed_D5, uint32_t speed_D6, uint32_t speed_D7, uint32_t speed_D8)
+void nanoDRONE_motorSpeed_set(uint32_t new_speed_D5, uint32_t new_speed_D6, uint32_t new_speed_D7, uint32_t new_speed_D8)
 {
+    uint32_t old_speed_D5;
+    uint32_t old_speed_D6;
+    uint32_t old_speed_D7;
+    uint32_t old_speed_D8;
+
     //Default value
     resp_str = "0x7F10";
 
-    /* channel0, 1 output hight level.
-    * channel2, 3 output low level */
-    pwm_set_duty(MOTOR_D5, speed_D5);
-    pwm_set_duty(MOTOR_D6, speed_D6);
-    pwm_set_duty(MOTOR_D7, speed_D7);
-    pwm_set_duty(MOTOR_D8, speed_D8);
+    pwm_get_duty(MOTOR_D5, &old_speed_D5);
+    pwm_get_duty(MOTOR_D6, &old_speed_D6);
+    pwm_get_duty(MOTOR_D7, &old_speed_D7);
+    pwm_get_duty(MOTOR_D8, &old_speed_D8);
 
-    pwm_start();
+    for(;((old_speed_D5 != new_speed_D5) || 
+            (old_speed_D6 != new_speed_D6) || 
+                (old_speed_D7 != new_speed_D7) || 
+                    (old_speed_D8 != new_speed_D8));)
+    {
+        /* channel0, 1 output hight level.
+        * channel2, 3 output low level */
+        if(old_speed_D5 != new_speed_D5)
+        {
+            pwm_set_duty(MOTOR_D5, (old_speed_D5 < new_speed_D5)?(old_speed_D5+1):(old_speed_D5-1));
+        }
 
-    /* update to static variable */
-    def_motor_speed[0] = speed_D5;
-    def_motor_speed[1] = speed_D6;
-    def_motor_speed[2] = speed_D7;
-    def_motor_speed[3] = speed_D8;
+        if(old_speed_D6 != new_speed_D6)
+        {
+            pwm_set_duty(MOTOR_D6, (old_speed_D6 < new_speed_D6)?(old_speed_D6+1):(old_speed_D6-1));
+        }
+
+        if(old_speed_D7 != new_speed_D7)
+        {
+            pwm_set_duty(MOTOR_D7, (old_speed_D7 < new_speed_D7)?(old_speed_D7+1):(old_speed_D7-1));
+        }
+
+        if(old_speed_D8 != new_speed_D8)
+        {
+            pwm_set_duty(MOTOR_D8, (old_speed_D8 < new_speed_D8)?(old_speed_D8+1):(old_speed_D8-1));
+        }
+
+        pwm_start();
+    }
 
     //E_OK
     resp_str = "0x0000"; 
@@ -128,7 +152,7 @@ void nanoDRONE_option_sel(int32_t buf_int)
         }
         else if(buf_int & DRONE_FLY_UP)
         {
-            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            nanoDRONE_motorSpeed_set(100, 100, 100, 100);
         }        
         else if(buf_int & DRONE_FLY_DOWN)
         {
@@ -140,10 +164,12 @@ void nanoDRONE_option_sel(int32_t buf_int)
         }        
         else if(buf_int & DRONE_FLY_CCW)
         {
-            nanoDRONE_motorSpeed_set(0, 0, 0, 0);
+            //This feature not supported due to no additional key in client
+            resp_str = "0x7F22";
         }
         else
         {
+            //Request out of range
             resp_str = "0x7F31";
         }
     }
